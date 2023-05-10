@@ -196,6 +196,16 @@ func (command cliCommand) isFdbCli() bool {
 	return command.getBinary() == fdbcliStr
 }
 
+// isFdbBackup returns true if the used binary is fdbbackup.
+func (command cliCommand) isFdbBackup() bool {
+	return command.getBinary() == fdbbackupStr
+}
+
+// isFdbRestore returns true if the used binary is fdbrestore.
+func (command cliCommand) isFdbRestore() bool {
+	return command.getBinary() == fdbrestoreStr
+}
+
 // getBinaryPath generates the path to an FDB binary.
 func getBinaryPath(binaryName string, version string) string {
 	parsed, _ := fdbv1beta2.ParseFdbVersion(version)
@@ -211,7 +221,7 @@ func (client *cliAdminClient) getArgsAndTimeout(command cliCommand) ([]string, t
 
 	args = append(args, command.getClusterFileFlag(), client.clusterFilePath, "--log")
 	// We only want to pass the knobs to fdbbackup and fdbrestore
-	if command.isFdbCli() {
+	if command.isFdbBackup() || command.isFdbRestore() {
 		args = append(args, client.knobs...)
 	}
 
